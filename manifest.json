@@ -1,11 +1,11 @@
 {
-  "name": "ExamFlow (김희율의 시험 정복기)",
+  "name": "ExamFlow",
   "short_name": "ExamFlow",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#020617",
   "theme_color": "#3b82f6",
-  "description": "김희율의 ExamFlow! 시험 일정을 완벽하게 관리하고 알림을 받아 시험을 박살내는 앱!",
+  "description": "ExamFlow! 시험 일정을 완벽하게 관리하고 알림을 받아 시험 관리 앱!",
   "icons": [
     {
       "src": "/icon-192x192.png",
