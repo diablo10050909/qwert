@@ -7,10 +7,14 @@
 <!-- Favicon 경로를 반드시 네 사이트의 파비콘으로 변경해라! 없으면 만들어! -->
 <link rel="icon" href="https://diablo10050909.github.io/asdasdasd/favicon.ico" type="image/x-icon">
 
+<!-- PWA Manifest 파일 연결! 네 앱의 지명수배 전단지다! -->
+<link rel="manifest" href="/manifest.json">
+
 <!-- Flatpickr CSS: 이걸로 네놈의 달력 위젯이 강력한 디자인을 얻는다! -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <!-- Flatpickr Dark Theme (ExamFlow의 다크모드와 어울리게!) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+
 
 <style>
 /* 기존 CSS는 그대로 둬! 이정도 디자인도 꽤 쓸만하거든. */
@@ -266,7 +270,8 @@ main{
       <option value="es">🇪🇸</option>
     </select>
     <!-- 알림 권한 요청 버튼 추가 -->
-    <button onclick="ExamFlowApp.requestNotificationPermission()" style="margin-left: 10px;">🔔 알림 요청</button>
+    <!-- 이 버튼 텍스트도 이제 언어 설정에 따라 변할 거다! -->
+    <button id="requestNotificationBtn" onclick="ExamFlowApp.requestNotificationPermission()" style="margin-left: 10px;"></button>
   </div>
   <button onclick="ExamFlowApp.toggleTheme()">🌗</button>
 </header>
@@ -280,11 +285,12 @@ main{
 
   <div class="panel">
     <h3 id="formTitle"></h3>
-    <input id="title" placeholder="시험 이름">
-    <input id="subject" placeholder="과목">
+    <!-- placeholder도 이제 언어 설정에 따라 변할 거다! -->
+    <input id="title" type="text">
+    <input id="subject" type="text">
     <!-- input type="date"를 type="text"로 바꾸고, Flatpickr가 이걸 마법처럼 다뤄줄 것이다! -->
-    <input type="text" id="start" placeholder="시작일 선택 (클릭)">
-    <input type="text" id="end" placeholder="종료일 선택 (클릭)">
+    <input type="text" id="start">
+    <input type="text" id="end">
     <button onclick="ExamFlowApp.saveExam()">저장</button>
   </div>
 </main>
@@ -311,7 +317,14 @@ const ExamFlowApp = {
         notification_granted: "알림 권한 획득 성공! 이제 세상이 네놈의 손에 있다.",
         notification_denied: "알림 권한이 거부되었다. 스스로를 방어할 기회를 버리는군.",
         notification_prompt: "알림 권한 대기 중... 결정을 내릴 때가 왔다.",
-        notification_unsupported: "이 빌어먹을 브라우저는 Service Worker 또는 알림을 지원하지 않는다!"
+        notification_unsupported: "이 빌어먹을 브라우저는 Service Worker 또는 알림을 지원하지 않는다!",
+        title_placeholder: "시험 이름", // 새로운 번역 키
+        subject_placeholder: "과목",   // 새로운 번역 키
+        start_placeholder: "시작일 선택 (클릭)", // 새로운 번역 키
+        end_placeholder: "종료일 선택 (클릭)",   // 새로운 번역 키
+        request_notification: "🔔 알림 요청",    // 새로운 번역 키
+        no_upcoming_exams_message: "모든 것은 통제 하에 있다.", // 새로운 번역 키
+        save_button: "저장" // 저장 버튼 텍스트
       },
       en:{
         add:"Add Exam",edit:"Edit Exam",del:"Delete",start:"Start Date",end:"End Date",alert:"Upcoming Exams",
@@ -324,7 +337,14 @@ const ExamFlowApp = {
         notification_granted: "Notification permission granted! The world is in your hands.",
         notification_denied: "Notification permission denied. You are forsaking a chance to defend yourself.",
         notification_prompt: "Notification permission pending... Time to make a decision.",
-        notification_unsupported: "This cursed browser does not support Service Workers or Notifications!"
+        notification_unsupported: "This cursed browser does not support Service Workers or Notifications!",
+        title_placeholder: "Exam Name",
+        subject_placeholder: "Subject",
+        start_placeholder: "Select Start Date (Click)",
+        end_placeholder: "Select End Date (Click)",
+        request_notification: "🔔 Request Notification",
+        no_upcoming_exams_message: "All is under control.",
+        save_button: "Save"
       },
       jp:{
         add:"試験追加",edit:"試験修正",del:"削除",start:"開始日",end:"終了日",alert:"今後の試験",
@@ -337,7 +357,14 @@ const ExamFlowApp = {
         notification_granted: "通知権限取得成功！これで世界が手中に！",
         notification_denied: "通知権限が拒否されました。自分を守る機会を捨てるなんて。",
         notification_prompt: "通知権限保留中...決断の時だ。",
-        notification_unsupported: "この忌まわしいブラウザはService Workerまたは通知に対応していません！"
+        notification_unsupported: "この忌まわしいブラウザはService Workerまたは通知に対応していません！",
+        title_placeholder: "試験名",
+        subject_placeholder: "科目",
+        start_placeholder: "開始日選択 (クリック)",
+        end_placeholder: "終了日選択 (クリック)",
+        request_notification: "🔔 通知要求",
+        no_upcoming_exams_message: "すべては制御下にある。",
+        save_button: "保存"
       },
       cn:{
         add:"添加考试",edit:"编辑考试",del:"删除",start:"开始日期",end:"结束日期",alert:"即将到来的考试",
@@ -350,7 +377,14 @@ const ExamFlowApp = {
         notification_granted: "通知权限获取成功！现在世界在你的掌控之中。",
         notification_denied: "通知权限被拒绝。你正在放弃保护自己的机会。",
         notification_prompt: "通知权限待定... 是时候做出决定了。",
-        notification_unsupported: "这个该死的浏览器不支持Service Worker或通知！"
+        notification_unsupported: "这个该死的浏览器不支持Service Worker或通知！",
+        title_placeholder: "考试名称",
+        subject_placeholder: "科目",
+        start_placeholder: "选择开始日期 (点击)",
+        end_placeholder: "选择结束日期 (点击)",
+        request_notification: "🔔 请求通知",
+        no_upcoming_exams_message: "一切尽在掌握。",
+        save_button: "保存"
       },
       es:{
         add:"Añadir Examen",edit:"Editar Examen",del:"Eliminar",start:"Fecha Inicio",end:"Fecha Fin",alert:"Próximos Exámenes",
@@ -363,7 +397,14 @@ const ExamFlowApp = {
         notification_granted: "¡Permiso de notificación concedido! El mundo está en tus manos.",
         notification_denied: "Permiso de notificación denegado. Estás renunciando a una oportunidad de defenderte.",
         notification_prompt: "Permiso de notificación pendiente... Es hora de tomar una decisión.",
-        notification_unsupported: "¡Este maldito navegador no soporta Service Worker o Notificaciones!"
+        notification_unsupported: "¡Este maldito navegador no soporta Service Worker o Notificaciones!",
+        title_placeholder: "Nombre del Examen",
+        subject_placeholder: "Asignatura",
+        start_placeholder: "Seleccionar Fecha de Inicio (Clic)",
+        end_placeholder: "Seleccionar Fecha de Fin (Clic)",
+        request_notification: "🔔 Solicitar Notificación",
+        no_upcoming_exams_message: "Todo está bajo control.",
+        save_button: "Guardar"
       }
     },
     
@@ -379,34 +420,44 @@ const ExamFlowApp = {
     startDatePicker: null,
     endDatePicker: null,
 
+    // Service Worker 등록 객체
+    serviceWorkerRegistration: null,
+
     // 시스템 초기화. 딱 한 번만 실행되는 중요한 명령이다.
     async init() {
         // Service Worker 등록은 다른 어떤 작업보다 먼저! 이것이 백그라운드의 시작이다.
         await this.registerServiceWorker();
 
         this.loadData();
-        this.setInitialLang();
+        this.setInitialLang(); // 언어 설정
         this.applyTheme();
-        this.render(); // 모든 걸 다시 그려라!
+        this.render(); // 모든 걸 다시 그려라! (알림, 목록, 달력)
         
         // Flatpickr를 초기화한다! 이게 바로 새로운 날짜 선택기다!
         this.initDatePickers();
+        
+        // Static 텍스트 요소들도 업데이트한다!
+        this.updateDynamicTextElements();
     },
 
     // Flatpickr를 초기화한다! 존나 강력한 날짜 선택기가 될 거다!
     initDatePickers() {
         const defaultFlatpickrOptions = {
             dateFormat: "Y-m-d", // 날짜 포맷은 YYYY-MM-DD
-            locale: "ko",       // 한국어 로케일 (다른 언어도 T[this.lang]에 맞춰 변경 가능)
+            // locale은 updateFlatpickrLocale에서 설정될 거다.
             altInput: false,     // 숨겨진 input을 사용하지 않고 직접 input을 사용.
             altFormat: "Y년 n월 j일", // 다른 포맷으로 표시하고 싶으면 이걸 사용.
-            // 테마는 CSS에서 Dark 테마를 불러왔으니 특별히 설정할 필요는 없지만,
-            // 더 세밀한 컨트롤을 원하면 theme.css 파일을 직접 만들 수도 있다.
+            disableMobile: true // 모바일에서 기본 달력이 뜨는 걸 막아라.
         };
 
         // 시작 날짜 선택기
         this.startDatePicker = flatpickr("#start", {
             ...defaultFlatpickrOptions,
+            // placeholder도 이제 번역 키를 사용한다!
+            onReady: (selectedDates, dateStr, instance) => {
+                 instance.altInput.placeholder = this.T[this.lang].start_placeholder;
+                 document.getElementById("start").placeholder = this.T[this.lang].start_placeholder;
+            },
             onChange: (selectedDates, dateStr, instance) => {
                 // 시작일이 선택되면, 종료일 선택기의 minDate를 자동으로 설정한다!
                 if (this.endDatePicker && selectedDates.length > 0) {
@@ -418,6 +469,11 @@ const ExamFlowApp = {
         // 종료 날짜 선택기
         this.endDatePicker = flatpickr("#end", {
             ...defaultFlatpickrOptions,
+             // placeholder도 이제 번역 키를 사용한다!
+            onReady: (selectedDates, dateStr, instance) => {
+                instance.altInput.placeholder = this.T[this.lang].end_placeholder;
+                document.getElementById("end").placeholder = this.T[this.lang].end_placeholder;
+            },
             onChange: (selectedDates, dateStr, instance) => {
                 // 종료일이 선택되면, 시작일 선택기의 maxDate를 자동으로 설정한다!
                 if (this.startDatePicker && selectedDates.length > 0) {
@@ -427,7 +483,6 @@ const ExamFlowApp = {
         });
         
         // 언어 변경 시 Flatpickr의 로케일도 변경되도록 한다.
-        // 이거 때문에 Flatpickr 인스턴스에 직접 접근해야 한다.
         this.updateFlatpickrLocale();
     },
 
@@ -436,10 +491,12 @@ const ExamFlowApp = {
         if (this.startDatePicker) {
             this.startDatePicker.set("locale", flatpickr.l10ns[this.lang] || flatpickr.l10ns.en); // 지원하는 언어가 없으면 영어로.
             this.startDatePicker.redraw(); // UI 업데이트 강제.
+            document.getElementById("start").placeholder = this.T[this.lang].start_placeholder; // 플레이스홀더 수동 업데이트
         }
         if (this.endDatePicker) {
             this.endDatePicker.set("locale", flatpickr.l10ns[this.lang] || flatpickr.l10ns.en);
             this.endDatePicker.redraw();
+            document.getElementById("end").placeholder = this.T[this.lang].end_placeholder; // 플레이스홀더 수동 업데이트
         }
     },
 
@@ -467,6 +524,7 @@ const ExamFlowApp = {
         localStorage.lang = l;
         this.render(); // 언어가 바뀌면 모든 걸 다시 그려야 한다.
         this.updateFlatpickrLocale(); // Flatpickr의 로케일도 변경해야지!
+        this.updateDynamicTextElements(); // 숨어있던 static 텍스트들도 업데이트해라!
     },
 
     // 테마를 전환해라. 빛과 어둠을 조종한다!
@@ -485,11 +543,16 @@ const ExamFlowApp = {
         if (this.endDatePicker) this.endDatePicker.clear();
 
         // 날짜 필드의 minDate, maxDate 제한도 해제하여 새로운 입력에 대비한다.
-        if (this.startDatePicker) this.startDatePicker.set("maxDate", null);
-        if (this.endDatePicker) this.endDatePicker.set("minDate", null);
+        if (this.startDatePicker) {
+            this.startDatePicker.set("maxDate", null);
+        }
+        if (this.endDatePicker) {
+            this.endDatePicker.set("minDate", null);
+        }
         
         this.editIndex = null;
         this.updateFormTitle(); // 폼 제목도 원상복구.
+        this.updateDynamicTextElements(); // placeholder 업데이트
     },
 
     // 시험 정보를 저장하거나 업데이트해라. 이게 바로 창조와 파괴다.
@@ -597,7 +660,8 @@ const ExamFlowApp = {
             }
         });
         if (!hasAlert) {
-             alertsDiv.innerHTML = `<b>${this.T[this.lang].alert}</b><br><div class="alert">모든 것은 통제 하에 있다.</div>`;
+             // 이 메시지도 번역 키를 사용한다!
+             alertsDiv.innerHTML = `<b>${this.T[this.lang].alert}</b><br><div class="alert">${this.T[this.lang].no_upcoming_exams_message}</div>`;
         }
     },
 
@@ -727,6 +791,17 @@ const ExamFlowApp = {
         }
     },
 
+    // HTML 내의 동적이지 않은 텍스트 요소들을 업데이트한다.
+    updateDynamicTextElements() {
+        document.getElementById("title").placeholder = this.T[this.lang].title_placeholder;
+        document.getElementById("subject").placeholder = this.T[this.lang].subject_placeholder;
+        document.getElementById("requestNotificationBtn").innerText = this.T[this.lang].request_notification;
+        document.querySelector('.panel button').innerText = this.T[this.lang].save_button; // 저장 버튼
+
+        // Flatpickr의 placeholder는 updateFlatpickrLocale에서 처리.
+        this.updateFlatpickrLocale();
+    },
+
     // Service Worker를 등록해라. 이것이 바로 백그라운드 작업을 위한 네 최전방 병사다!
     async registerServiceWorker() {
         if ('serviceWorker' in navigator) {
@@ -786,9 +861,6 @@ const ExamFlowApp = {
 };
 
 // 페이지 로드 후 즉시 시스템을 가동시켜라! 즉시!
-window.addEventListener('DOMContentLoaded', () => ExamFlowApp.init());
-
-</script>
 window.addEventListener('DOMContentLoaded', () => ExamFlowApp.init());
 
 </script>
